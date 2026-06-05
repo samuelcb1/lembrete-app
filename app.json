@@ -19,7 +19,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.lembreteapp"
     },
     "web": {
       "output": "static",
@@ -27,6 +28,7 @@
     },
     "plugins": [
       "expo-router",
+      "@react-native-google-signin/google-signin",
       [
         "expo-splash-screen",
         {
@@ -38,11 +40,19 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-secure-store"
     ],
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "809a7aca-8089-4b81-a30e-b3d348a2e540"
+      }
+    },
+    "owner": "samuel_campos"
   }
 }
