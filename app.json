@@ -1,7 +1,10 @@
 {
+  "cli": {
+    "appVersionSource": "remote"
+  },
   "expo": {
     "name": "Lembra",
-    "slug": "lembra-app",
+    "slug": "lembrete-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
