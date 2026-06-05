@@ -17,13 +17,18 @@ export type AuthTokens = {
 export type UserProfile = {
   id: string;
   email: string;
-  name: string;
-  picture?: string;
+  displayName: string;
+  photoUrl?: string;
+};
+
+export type GoogleTokenInput = {
+  idToken: string;
+  serverAuthCode: string;
 };
 
 export const authService = {
-  async loginWithGoogleToken(idToken: string): Promise<AuthTokens> {
-    const { data } = await api.post<AuthTokens>('/auth/google/token', { idToken });
+  async loginWithGoogleToken(input: GoogleTokenInput): Promise<AuthTokens> {
+    const { data } = await api.post<AuthTokens>('/auth/google/token', input);
     await authService.saveTokens(data);
     return data;
   },

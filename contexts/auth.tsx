@@ -22,7 +22,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>({ status: 'loading' });
 
   useEffect(() => {
-    GoogleSignin.configure({ webClientId: GOOGLE_WEB_CLIENT_ID });
+    GoogleSignin.configure({
+      webClientId: GOOGLE_WEB_CLIENT_ID,
+      offlineAccess: true,
+      forceCodeForRefreshToken: true,
+      scopes: ['https://www.googleapis.com/auth/calendar.events'],
+    });
     restoreSession();
   }, []);
 
@@ -54,8 +59,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await GoogleSignin.hasPlayServices();
     const userInfo = await GoogleSignin.signIn();
     const idToken = userInfo.data?.idToken;
+    const serverAuthCode = userInfo.data?.serverAuthCode;
     if (!idToken) throw new Error('Não foi possível obter o token do Google');
-    const tokens = await authService.loginWithGoogleToken(idToken);
+    if (!serverAuthCode) throw new Error('Não foi possível obter o serverAuthCode do Google');
+    const tokens = await authService.loginWithGoogleToken({ idToken, serverAuthCode });
     const user = await authService.getProfile(tokens.accessToken);
     setState({ status: 'authenticated', user, accessToken: tokens.accessToken });
   }

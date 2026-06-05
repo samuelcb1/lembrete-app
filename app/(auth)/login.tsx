@@ -20,30 +20,40 @@ export default function LoginScreen() {
   }
 
   return (
-    <View className="flex-1 bg-white items-center justify-center px-8">
-      <View className="items-center mb-16">
-        <Text className="text-4xl font-bold text-gray-900">Lembretes</Text>
-        <Text className="text-base text-gray-500 mt-2">Organize seu dia com facilidade</Text>
+    <View className="flex-1 bg-zinc-950 items-center justify-center px-8">
+      <View className="items-center mb-14 gap-4">
+        <View className="w-24 h-24 bg-sky-500/15 rounded-3xl items-center justify-center">
+          <Text className="text-5xl">🔔</Text>
+        </View>
+        <View className="items-center gap-1.5">
+          <Text className="text-white text-4xl font-bold tracking-tight">Lembrete</Text>
+          <Text className="text-zinc-500 text-base">Organize seu dia com facilidade</Text>
+        </View>
       </View>
 
       <Pressable
-        className="flex-row items-center bg-white border border-gray-200 rounded-xl px-6 py-4 gap-3 shadow-sm w-full"
+        className="flex-row items-center bg-white rounded-2xl px-6 py-4 gap-3 w-full active:opacity-80"
         onPress={handleGoogleLogin}
         disabled={loading}
       >
-        {loading ? (
-          <ActivityIndicator size="small" color="#4285F4" />
-        ) : (
-          <Text className="text-2xl">G</Text>
-        )}
-        <Text className="text-gray-700 font-semibold text-base flex-1 text-center">
-          {loading ? 'Entrando...' : 'Entrar com Google'}
+        {loading
+          ? <ActivityIndicator size="small" color="#4285F4" />
+          : <Text className="text-xl font-bold text-[#4285F4]">G</Text>
+        }
+        <Text className="text-gray-800 font-semibold text-base flex-1 text-center">
+          {loading ? 'Entrando...' : 'Continuar com Google'}
         </Text>
       </Pressable>
 
       {error && (
-        <Text className="text-red-500 text-sm mt-4 text-center">{error}</Text>
+        <View className="mt-5 bg-red-500/10 rounded-xl px-4 py-3 w-full">
+          <Text className="text-red-400 text-sm text-center">{error}</Text>
+        </View>
       )}
+
+      <Text className="text-zinc-700 text-xs text-center mt-12 leading-5">
+        Ao continuar, você concorda com nossos{'\n'}Termos de Uso e Política de Privacidade
+      </Text>
     </View>
   );
 }

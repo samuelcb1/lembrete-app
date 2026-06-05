@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "lembrete-app",
-    "slug": "lembrete-app",
+    "name": "Lembra",
+    "slug": "lembra-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -33,12 +33,9 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 200,
+          "imageWidth": 180,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
-          "dark": {
-            "backgroundColor": "#000000"
-          }
+          "backgroundColor": "#09090b"
         }
       ],
       "expo-secure-store"
