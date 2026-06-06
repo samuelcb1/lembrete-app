@@ -1,8 +1,7 @@
-import { authService, UserProfile } from '@/services/auth.service';
+import { authService, AuthTokens, UserProfile } from '@/services/auth.service';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { createContext, useContext, useEffect, useState } from 'react';
 
-// Substitua pelo seu Web Client ID do Google Cloud Console
 const GOOGLE_WEB_CLIENT_ID = '495821921383-t03q7s06ktql3m2p1mgifk6qjuvh8jjc.apps.googleusercontent.com';
 
 type AuthState =
@@ -32,24 +31,49 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   async function restoreSession() {
+    const tokens = await authService.getStoredTokens();
+    if (!tokens) {
+      setState({ status: 'unauthenticated' });
+      return;
+    }
+
+    // Use cached profile for instant startup — no network wait
+    const cachedProfile = await authService.getStoredProfile();
+    if (cachedProfile) {
+      setState({ status: 'authenticated', user: cachedProfile, accessToken: tokens.accessToken });
+      validateTokenInBackground(tokens);
+      return;
+    }
+
+    // No cache yet (first login after update) — must fetch
     try {
-      const tokens = await authService.getStoredTokens();
-      if (!tokens) {
-        setState({ status: 'unauthenticated' });
-        return;
-      }
       const user = await authService.getProfile(tokens.accessToken);
+      await authService.saveProfile(user);
       setState({ status: 'authenticated', user, accessToken: tokens.accessToken });
     } catch {
-      try {
-        const stored = await authService.getStoredTokens();
-        if (stored) {
-          const refreshed = await authService.refreshTokens(stored.refreshToken);
-          const user = await authService.getProfile(refreshed.accessToken);
-          setState({ status: 'authenticated', user, accessToken: refreshed.accessToken });
-          return;
-        }
-      } catch {}
+      await handleExpiredTokens(tokens);
+    }
+  }
+
+  async function validateTokenInBackground(tokens: AuthTokens) {
+    try {
+      const user = await authService.getProfile(tokens.accessToken);
+      await authService.saveProfile(user);
+      setState(prev =>
+        prev.status === 'authenticated' ? { ...prev, user } : prev
+      );
+    } catch {
+      await handleExpiredTokens(tokens);
+    }
+  }
+
+  async function handleExpiredTokens(tokens: AuthTokens) {
+    try {
+      const refreshed = await authService.refreshTokens(tokens.refreshToken);
+      const user = await authService.getProfile(refreshed.accessToken);
+      await authService.saveProfile(user);
+      setState({ status: 'authenticated', user, accessToken: refreshed.accessToken });
+    } catch {
       await authService.clearTokens();
       setState({ status: 'unauthenticated' });
     }
@@ -64,6 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!serverAuthCode) throw new Error('Não foi possível obter o serverAuthCode do Google');
     const tokens = await authService.loginWithGoogleToken({ idToken, serverAuthCode });
     const user = await authService.getProfile(tokens.accessToken);
+    await authService.saveProfile(user);
     setState({ status: 'authenticated', user, accessToken: tokens.accessToken });
   }
 

@@ -7,6 +7,7 @@ const api = axios.create({ baseURL: API_BASE_URL });
 const KEYS = {
   accessToken: 'access_token',
   refreshToken: 'refresh_token',
+  userProfile: 'user_profile',
 } as const;
 
 export type AuthTokens = {
@@ -62,10 +63,21 @@ export const authService = {
     return { accessToken, refreshToken };
   },
 
+  async saveProfile(profile: UserProfile): Promise<void> {
+    await SecureStore.setItemAsync(KEYS.userProfile, JSON.stringify(profile));
+  },
+
+  async getStoredProfile(): Promise<UserProfile | null> {
+    const raw = await SecureStore.getItemAsync(KEYS.userProfile);
+    if (!raw) return null;
+    try { return JSON.parse(raw); } catch { return null; }
+  },
+
   async clearTokens(): Promise<void> {
     await Promise.all([
       SecureStore.deleteItemAsync(KEYS.accessToken),
       SecureStore.deleteItemAsync(KEYS.refreshToken),
+      SecureStore.deleteItemAsync(KEYS.userProfile),
     ]);
   },
 };

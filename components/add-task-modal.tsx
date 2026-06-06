@@ -5,7 +5,6 @@ import {
   Alert,
   KeyboardAvoidingView,
   Modal,
-  Platform,
   Pressable,
   ScrollView,
   Text,
@@ -153,8 +152,8 @@ export function AddTaskModal({ visible, accessToken, onAdd, onClose }: Props) {
 
   return (
     <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
-      <Pressable className="flex-1 bg-black/50" onPress={onClose} />
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+      <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+        <Pressable style={{ flex: 1 }} className="bg-black/50" onPress={onClose} />
         <View style={{ paddingBottom: bottom + 16 }} className="bg-zinc-900 rounded-t-3xl px-6 pt-4 gap-5">
           <View className="w-10 h-1 bg-zinc-700 rounded-full self-center mb-1" />
 
@@ -282,5 +281,6 @@ export function AddTaskModal({ visible, accessToken, onAdd, onClose }: Props) {
         </View>
       </KeyboardAvoidingView>
     </Modal>
+
   );
 }
