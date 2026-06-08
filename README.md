@@ -31,3 +31,6 @@ Aplicativo mobile de lembretes pessoais construído com **Expo (React Native)**,
    ```
 
 Abra no [Android Emulator](https://docs.expo.dev/workflow/android-studio-emulator/), [iOS Simulator](https://docs.expo.dev/workflow/ios-simulator/) ou [Expo Go](https://expo.dev/go).
+
+# lembrete-app
+Aplicativo mobile de lembretes pessoais construído com Expo/React Native. Permite criar eventos com data e hora a partir de texto livre ou leitura de imagens via IA, usando autenticação Google OAuth. Os lembretes são armazenados em uma API REST e exibidos em cards organizados por status (próximos / encerrados).
