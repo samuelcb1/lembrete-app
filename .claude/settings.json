@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(xargs grep -l \"lembra\\\\|applicationId\\\\|package\")"
+      "Bash(xargs grep -l \"lembra\\\\|applicationId\\\\|package\")",
+      "Bash(git pull *)"
     ],
     "additionalDirectories": [
       "C:\\Users\\csaca\\.gradle\\caches\\build-cache-1"
