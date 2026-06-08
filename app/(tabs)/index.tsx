@@ -29,6 +29,13 @@ function firstName(name?: string) {
   return name?.split(' ')[0] ?? '';
 }
 
+function parseLocalISO(iso: string): Date {
+  const [datePart, timePart = '00:00:00'] = iso.split('T');
+  const [year, month, day] = datePart.split('-').map(Number);
+  const [h = 0, m = 0, s = 0] = timePart.split(':').map(Number);
+  return new Date(year, month - 1, day, h, m, s);
+}
+
 function isSameDay(a: Date, b: Date) {
   return a.getDate() === b.getDate() &&
     a.getMonth() === b.getMonth() &&
@@ -36,7 +43,7 @@ function isSameDay(a: Date, b: Date) {
 }
 
 function getDayLabel(iso: string): { text: string; color: string } | null {
-  const d = new Date(iso);
+  const d = parseLocalISO(iso);
   const today = new Date();
   const tomorrow = new Date();
   tomorrow.setDate(today.getDate() + 1);
@@ -46,15 +53,15 @@ function getDayLabel(iso: string): { text: string; color: string } | null {
 }
 
 function formatTime(iso: string) {
-  return new Date(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+  return parseLocalISO(iso).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 }
 
 function isPast(iso: string) {
-  return new Date(iso) < new Date();
+  return parseLocalISO(iso) < new Date();
 }
 
 function ReminderCard({ item, onDelete }: { item: Reminder; onDelete: (id: string) => void }) {
-  const start = new Date(item.startDateTime);
+  const start = parseLocalISO(item.startDateTime);
   const ended = isPast(item.endDateTime);
   const dayLabel = getDayLabel(item.startDateTime);
 
@@ -184,17 +191,15 @@ export default function HomeScreen() {
   }
 
   const today = new Date();
-  const todayCount = reminders.filter(r => isSameDay(new Date(r.startDateTime), today) && !isPast(r.endDateTime)).length;
+  const todayCount = reminders.filter(r => isSameDay(parseLocalISO(r.startDateTime), today) && !isPast(r.endDateTime)).length;
   const upcoming = reminders.filter(r => !isPast(r.endDateTime));
   const past = reminders.filter(r => isPast(r.endDateTime));
 
 
   return (
     <SafeAreaView className="flex-1 bg-zinc-950" edges={['top']}>
-      {/* Header */}
       <View className="px-5 pt-4 pb-3">
         <View className="flex-row items-center justify-between">
-          {/* Left: avatar + greeting */}
           <View className="flex-row items-center gap-3">
             <Pressable onLongPress={confirmSignOut} hitSlop={4}>
               {user?.photoUrl ? (
@@ -215,7 +220,6 @@ export default function HomeScreen() {
             </View>
           </View>
 
-          {/* Right: sign out */}
           <Pressable
             onPress={confirmSignOut}
             className="w-9 h-9 rounded-full bg-zinc-900 border border-zinc-800 items-center justify-center active:opacity-60"
@@ -225,7 +229,6 @@ export default function HomeScreen() {
           </Pressable>
         </View>
 
-        {/* Summary strip */}
         {!loading && reminders.length > 0 && (
           <View className="flex-row gap-2 mt-4">
             <View className="flex-1 bg-sky-500/10 border border-sky-500/20 rounded-xl px-3 py-2.5 gap-0.5">
@@ -244,7 +247,6 @@ export default function HomeScreen() {
         )}
       </View>
 
-      {/* Content */}
       {loading ? (
         <View className="flex-1 items-center justify-center gap-3">
           <ActivityIndicator size="large" color="#0ea5e9" />
@@ -294,7 +296,6 @@ export default function HomeScreen() {
         />
       )}
 
-      {/* FAB */}
       <Pressable
         style={{ bottom: bottom + 16 }}
         className="absolute right-6 w-14 h-14 rounded-2xl bg-sky-500 items-center justify-center shadow-lg active:opacity-80"

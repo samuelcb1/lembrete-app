@@ -37,7 +37,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // Use cached profile for instant startup — no network wait
     const cachedProfile = await authService.getStoredProfile();
     if (cachedProfile) {
       setState({ status: 'authenticated', user: cachedProfile, accessToken: tokens.accessToken });
@@ -45,7 +44,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       return;
     }
 
-    // No cache yet (first login after update) — must fetch
     try {
       const user = await authService.getProfile(tokens.accessToken);
       await authService.saveProfile(user);
